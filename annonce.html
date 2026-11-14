@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annonce | AdaLink</title><meta name="description" content="AdaLink, l'application AdaTech qui relie les gens au Gabon : logement, répétiteurs, emploi."><style>*{box-sizing:border-box;margin:0}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#0B2545;background:#F7F8FB;line-height:1.6}
+header{background:#0B2545;color:#fff;padding:18px 20px}header a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:1.5px;max-width:760px;margin:0 auto}
+header b{color:#FF4A50}main{max-width:760px;margin:0 auto;padding:32px 20px 48px}h1{font-size:30px;line-height:1.2;margin-bottom:12px}
+h2{font-size:18px;margin:26px 0 6px}p,li{font-size:16px}ul{padding-left:20px}.muted{color:#5A6478}
+.btn{display:inline-block;background:#D71920;color:#fff;text-decoration:none;font-weight:700;padding:15px 26px;border-radius:14px;margin:18px 0 6px}
+.card h2{margin-top:0}.card{background:#fff;border-radius:18px;padding:22px;margin-top:22px;box-shadow:0 1px 2px #0B254512}
+footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:14px}footer a{color:#0B2545}</style></head><body>
+<header><a href="index.html"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-45 32 32)" fill="none" stroke-width="6"><rect x="5" y="21" width="32" height="22" rx="11" stroke="#fff"/><rect x="27" y="21" width="32" height="22" rx="11" stroke="#FF4A50"/></g></svg><span>ADA<b>LINK</b></span></a></header><main><div id="card" class="card"><p class="muted" id="msg">Chargement de l'annonce…</p></div>
+<a class="btn" id="open" href="#">Ouvrir dans l'appli AdaLink</a>
+<p class="muted">Tu n'as pas encore l'appli ? <a href="https://github.com/yvesfarelnkoghenguemabekale-ship-it/adalink-site/releases/latest/download/AdaLink.apk">Télécharge AdaLink pour Android</a> (gratuit), puis rouvre ce lien.</p>
+<style>#card img{width:100%;max-height:340px;object-fit:cover;border-radius:14px;margin-bottom:12px}.price{font-size:22px;font-weight:800;margin-top:8px}</style>
+<script>
+  // Clé PUBLIQUE de Supabase (publishable) : sans danger, elle ne donne accès qu'aux annonces publiées.
+  const SUPABASE_URL = "https://cnkiybunohtalfbghfbd.supabase.co";
+  const SUPABASE_KEY = "COLLE_ICI_TA_CLE_PUBLIQUE";
+  const id = new URLSearchParams(location.search).get("id") || "";
+  document.getElementById("open").href = "adalink://annonce/" + encodeURIComponent(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const fcfa = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const msg = (t) => document.getElementById("card").innerHTML = '<p class="muted">' + t + '</p>';
+  if (/^[0-9a-f-]{36}$/i.test(id)) {
+    fetch(SUPABASE_URL + "/rest/v1/listings?id=eq." + id + "&status=eq.published&select=title,city,quartier,price,price_unit,photos,description",
+      { headers: { apikey: SUPABASE_KEY } })
+      .then((r) => r.json()).then((rows) => {
+        const l = Array.isArray(rows) && rows[0];
+        if (!l) return msg("Cette annonce n'est plus disponible.");
+        const photo = (l.photos || [])[0];
+        const price = l.price == null ? "Prix à discuter" : fcfa(l.price) + " FCFA" + (l.price_unit ? " / " + esc(l.price_unit) : "");
+        document.getElementById("card").innerHTML = (photo ? '<img src="' + esc(photo) + '" alt="">' : "") +
+          "<h1>" + esc(l.title) + '</h1><div class="muted">' + esc([l.quartier, l.city].filter(Boolean).join(", ")) + "</div>" +
+          '<div class="price">' + price + "</div><p>" + esc((l.description || "").slice(0, 280)) + "</p>";
+        document.title = l.title + " | AdaLink";
+      }).catch(() => msg("Ouvre l'annonce dans l'appli AdaLink."));
+  } else msg("Lien incomplet.");
+</script></main>
+<footer class="muted"><a href="index.html">Accueil</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="conditions.html">Conditions d'utilisation</a> · <a href="supprimer-compte.html">Supprimer mon compte</a><br>AdaLink est une application AdaTech, Gabon. Contact : yvesfarelnkoghenguemabekale@gmail.com</footer></body></html>
