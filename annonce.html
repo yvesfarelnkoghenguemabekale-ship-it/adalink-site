@@ -13,7 +13,7 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:14px}footer a
 <script>
   // Clé PUBLIQUE de Supabase (publishable) : sans danger, elle ne donne accès qu'aux annonces publiées.
   const SUPABASE_URL = "https://cnkiybunohtalfbghfbd.supabase.co";
-  const SUPABASE_KEY = "COLLE_ICI_TA_CLE_PUBLIQUE";
+  const SUPABASE_KEY = "sb_publishable_r-o7RscSEVin19cPhS-Oew_GLtO2L_i";
   const id = new URLSearchParams(location.search).get("id") || "";
   document.getElementById("open").href = "adalink://annonce/" + encodeURIComponent(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
